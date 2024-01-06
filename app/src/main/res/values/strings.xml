@@ -1,3 +1,11 @@
 <resources>
   <string name="app_name">SelfManagement</string>
+  <string name="signup_welcome">Welcome</string>
+  <string name="signup_welcome_message">Please enter your information to Sign Up</string>
+  <string name="signup_email_label">Email</string>
+  <string name="signup_password_label">Password</string>
+  <string name="signup_button">Sign Up</string>
+  <string name="signup_error_email">メールアドレスが不正です</string>
+  <string name="signup_error_password">パスワードは6文字以上で入力してください</string>
+  <string name="signup_error_auth">認証に失敗しました</string>
 </resources>

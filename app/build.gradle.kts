@@ -1,11 +1,16 @@
+import dependencies.Dep
+
 plugins {
   id("com.android.application")
   id("org.jetbrains.kotlin.android")
+  id("com.google.dagger.hilt.android")
+  id("com.google.gms.google-services")
+  kotlin("kapt")
 }
 
 android {
   namespace = "com.ho2ri2s.selfmanagement"
-  compileSdk = 33
+  compileSdk = 34
 
   defaultConfig {
     applicationId = "com.ho2ri2s.selfmanagement"
@@ -37,30 +42,85 @@ android {
     compose = true
   }
   composeOptions {
-    kotlinCompilerExtensionVersion = "1.4.3"
+    kotlinCompilerExtensionVersion = Dep.Versions.composeCompiler
   }
   packaging {
     resources {
       excludes += "/META-INF/{AL2.0,LGPL2.1}"
     }
   }
+
+}
+
+kapt {
+  correctErrorTypes = true
 }
 
 dependencies {
 
-  implementation("androidx.core:core-ktx:1.9.0")
-  implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
-  implementation("androidx.activity:activity-compose:1.8.2")
-  implementation(platform("androidx.compose:compose-bom:2023.03.00"))
-  implementation("androidx.compose.ui:ui")
-  implementation("androidx.compose.ui:ui-graphics")
-  implementation("androidx.compose.ui:ui-tooling-preview")
-  implementation("androidx.compose.material3:material3")
-  testImplementation("junit:junit:4.13.2")
-  androidTestImplementation("androidx.test.ext:junit:1.1.5")
-  androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-  androidTestImplementation(platform("androidx.compose:compose-bom:2023.03.00"))
-  androidTestImplementation("androidx.compose.ui:ui-test-junit4")
-  debugImplementation("androidx.compose.ui:ui-tooling")
-  debugImplementation("androidx.compose.ui:ui-test-manifest")
+  implementation(Dep.Kotlin.kotlin)
+
+  implementation(Dep.AndroidX.material)
+  implementation(Dep.AndroidX.core)
+  implementation(Dep.AndroidX.appCompat)
+  implementation(Dep.AndroidX.constraintLayout)
+
+  implementation(Dep.AndroidX.activityKtx)
+
+  implementation(Dep.AndroidX.LifeCycle.liveData)
+  implementation(Dep.AndroidX.LifeCycle.viewModel)
+  implementation(Dep.AndroidX.LifeCycle.viewModelCompose)
+  implementation(Dep.AndroidX.LifeCycle.lifecycleCompose)
+  implementation(Dep.AndroidX.LifeCycle.lifecycleKtx)
+  implementation("com.google.firebase:firebase-firestore-ktx:24.10.0")
+  kapt(Dep.AndroidX.LifeCycle.processor)
+
+  implementation(Dep.Hilt.core)
+  kapt(Dep.Hilt.compiler)
+
+  implementation(Dep.Arrow.core)
+  implementation(Dep.Arrow.fxCoroutines)
+  implementation(Dep.Arrow.fxStm)
+
+  // Jetpack Compose
+  implementation(platform(Dep.AndroidX.Compose.bom))
+  implementation(Dep.AndroidX.Compose.ui)
+  implementation(Dep.AndroidX.Compose.material)
+  implementation(Dep.AndroidX.Compose.extendMaterialIcon)
+  implementation(Dep.AndroidX.Compose.uiTooling)
+  implementation(Dep.AndroidX.Compose.activity)
+  implementation(Dep.AndroidX.Compose.constraintLayout)
+  implementation(Dep.AndroidX.Compose.viewModel)
+  implementation(Dep.AndroidX.Compose.navigation)
+  implementation(Dep.AndroidX.Compose.coil)
+
+  implementation(platform(Dep.Firebase.bom))
+  implementation(Dep.Firebase.dynamicLinksKtx)
+  implementation(Dep.Firebase.analyticsKtx)
+  implementation(Dep.Firebase.auth)
+  implementation(Dep.Kotlin.playServices)
+
+  implementation(Dep.Kotlin.serialization)
+  implementation(Dep.Network.retrofit)
+  implementation(Dep.Network.moshiConverter)
+  implementation(Dep.Network.moshi)
+  implementation(Dep.Network.okHttp)
+  implementation(Dep.Network.okHttpLogging)
+  implementation(Dep.Network.okHttpMockServer)
+  implementation(Dep.Network.serializationConverter)
+
+  implementation(Dep.window)
+  implementation(Dep.timber)
+
+  // Test
+  testImplementation(Dep.Test.junit)
+  testImplementation(Dep.Test.runner)
+  testImplementation(Dep.Test.rule)
+  testImplementation(Dep.Test.coreKtx)
+  testImplementation(Dep.Test.liveDataTestingKtx)
+  testImplementation(Dep.Test.truth)
+  testImplementation(Dep.Test.mockk)
+  testImplementation(Dep.Test.coroutinesTest)
+  testImplementation(Dep.Test.archCore)
+  testImplementation(Dep.Kotlin.reflect)
 }
