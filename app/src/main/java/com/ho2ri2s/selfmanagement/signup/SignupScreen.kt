@@ -41,9 +41,20 @@ import com.ho2ri2s.selfmanagement.R
 
 // TODO: Navigation, enterキーでのタブ移動, パスワードの非表示
 @Composable
-fun SignupScreen(viewModel: SignupViewModel) {
+fun SignupScreen(
+  viewModel: SignupViewModel,
+  onClickSignup: () -> Unit,
+  modifier: Modifier = Modifier,
+) {
   val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+  val shouldNavigate by viewModel.navigateState.collectAsStateWithLifecycle()
   val snackBarState by viewModel.snackBarState.collectAsStateWithLifecycle()
+  LaunchedEffect(shouldNavigate) {
+    if (shouldNavigate) {
+      onClickSignup()
+      viewModel.onNavigated()
+    }
+  }
   SignupScreen(
     uiState = uiState,
     snackBarType = snackBarState,
@@ -51,6 +62,7 @@ fun SignupScreen(viewModel: SignupViewModel) {
     onChangePassword = viewModel::onChangePassword,
     onClickButton = viewModel::onClickSignup,
     onShownSnackBar = viewModel::onShownSnackBar,
+    modifier = modifier,
   )
 }
 
