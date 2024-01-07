@@ -10,17 +10,16 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-
-  @RequiresApi(Build.VERSION_CODES.R)
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    window.decorView.windowInsetsController?.run {
-      hide(android.view.WindowInsets.Type.statusBars())
+    @RequiresApi(Build.VERSION_CODES.R)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        window.decorView.windowInsetsController?.run {
+            hide(android.view.WindowInsets.Type.statusBars())
+        }
+        setContent {
+            SelfManagementTheme {
+                MainScreen()
+            }
+        }
     }
-    setContent {
-      SelfManagementTheme {
-        MainScreen()
-      }
-    }
-  }
 }

@@ -15,37 +15,39 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 @Module
 object ApiModule {
+    @Provides
+    @Singleton
+    fun provideOkHttpClient(authInterceptor: AuthInterceptor): OkHttpClient {
+        return OkHttpClient.Builder()
+            .addInterceptor(
+                HttpLoggingInterceptor().apply {
+                    // TODO: 機密情報漏らさないようにする
+                    level = HttpLoggingInterceptor.Level.BODY
+                },
+            )
+            .addInterceptor(authInterceptor)
+            .build()
+    }
 
-  @Provides
-  @Singleton
-  fun provideOkHttpClient(authInterceptor: AuthInterceptor): OkHttpClient {
-    return OkHttpClient.Builder()
-      .addInterceptor(HttpLoggingInterceptor().apply {
-        // TODO: 機密情報漏らさないようにする
-        level = HttpLoggingInterceptor.Level.BODY
-      })
-      .addInterceptor(authInterceptor)
-      .build()
-  }
+    @Provides
+    @Singleton
+    fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
+        // TODO: kotlin serializationに書き換える
+        val baseUrl = "https://selfmanageapp.onrender.com"
+        val moshi =
+            Moshi.Builder()
+                .add(KotlinJsonAdapterFactory())
+                .build()
+        return Retrofit.Builder()
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .baseUrl(baseUrl)
+            .client(okHttpClient)
+            .build()
+    }
 
-  @Provides
-  @Singleton
-  fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
-    // TODO: kotlin serializationに書き換える
-    val baseUrl = "https://selfmanageapp.onrender.com"
-    val moshi = Moshi.Builder()
-      .add(KotlinJsonAdapterFactory())
-      .build()
-    return Retrofit.Builder()
-      .addConverterFactory(MoshiConverterFactory.create(moshi))
-      .baseUrl(baseUrl)
-      .client(okHttpClient)
-      .build()
-  }
-
-  @Provides
-  @Singleton
-  fun provideSelfManagementApi(retrofit: Retrofit): SelfManagementApi {
-    return SelfManagementApi(retrofit)
-  }
+    @Provides
+    @Singleton
+    fun provideSelfManagementApi(retrofit: Retrofit): SelfManagementApi {
+        return SelfManagementApi(retrofit)
+    }
 }

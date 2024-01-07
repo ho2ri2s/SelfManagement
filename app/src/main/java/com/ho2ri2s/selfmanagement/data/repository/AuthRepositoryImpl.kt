@@ -7,23 +7,30 @@ import kotlinx.coroutines.tasks.await
 import timber.log.Timber
 import javax.inject.Inject
 
-class AuthRepositoryImpl @Inject constructor(
-  private val auth: FirebaseAuth,
-  private val selfManagementApi: SelfManagementApi,
-) : AuthRepository {
+class AuthRepositoryImpl
+    @Inject
+    constructor(
+        private val auth: FirebaseAuth,
+        private val selfManagementApi: SelfManagementApi,
+    ) : AuthRepository {
+        override suspend fun signupWithEmailPassword(
+            email: String,
+            password: String,
+        ) {
+            if (auth.currentUser != null) {
+                // TODO: すでにログイン済みなので、ログイン画面に飛ばす
+                throw IllegalStateException("Already SignIn")
+            }
+            val result = auth.createUserWithEmailAndPassword(email, password).await()
+            Timber.d("mytag user = ${result.user?.email}, ${result.user?.uid}")
+        }
 
-  override suspend fun signupWithEmailPassword(email: String, password: String) {
-    if (auth.currentUser != null) {
-      // TODO: すでにログイン済みなので、ログイン画面に飛ばす
-      throw IllegalStateException("Already SignIn")
+        override suspend fun register(
+            email: String,
+            name: String,
+        ): User {
+            // TODO: name入力
+            val name = "testhoris"
+            return selfManagementApi.register(SelfManagementApi.RegisterRequest(email, name))
+        }
     }
-    val result = auth.createUserWithEmailAndPassword(email, password).await()
-    Timber.d("mytag user = ${result.user?.email}, ${result.user?.uid}")
-  }
-
-  override suspend fun register(email: String, name: String): User {
-    // TODO: name入力
-    val name = "testhoris"
-    return selfManagementApi.register(SelfManagementApi.RegisterRequest(email, name))
-  }
-}

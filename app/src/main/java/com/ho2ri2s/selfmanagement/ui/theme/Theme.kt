@@ -11,36 +11,37 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
-private val SelfManagementColors = lightColors(
-  primary = DarkBlue,
-  primaryVariant = DarkBlue,
-  onPrimary = Color.White,
-  secondary = MediumEmphasis,
-  secondaryVariant = Red900,
-  onSecondary = Color.White,
-  error = Red800,
-  onBackground = Color.Black
-)
+private val SelfManagementColors =
+    lightColors(
+        primary = DarkBlue,
+        primaryVariant = DarkBlue,
+        onPrimary = Color.White,
+        secondary = MediumEmphasis,
+        secondaryVariant = Red900,
+        onSecondary = Color.White,
+        error = Red800,
+        onBackground = Color.Black,
+    )
 
 @Composable
 fun SelfManagementTheme(
-  darkTheme: Boolean = isSystemInDarkTheme(),
-  // Dynamic color is available on Android 12+
-  dynamicColor: Boolean = true,
-  content: @Composable () -> Unit,
+    darkTheme: Boolean = isSystemInDarkTheme(),
+    // Dynamic color is available on Android 12+
+    dynamicColor: Boolean = true,
+    content: @Composable () -> Unit,
 ) {
-  val colorScheme = SelfManagementColors
-  val view = LocalView.current
-  if (!view.isInEditMode) {
-    SideEffect {
-      val window = (view.context as Activity).window
-      window.statusBarColor = colorScheme.primary.toArgb()
-      WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
+    val colorScheme = SelfManagementColors
+    val view = LocalView.current
+    if (!view.isInEditMode) {
+        SideEffect {
+            val window = (view.context as Activity).window
+            window.statusBarColor = colorScheme.primary.toArgb()
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
+        }
     }
-  }
 
-  MaterialTheme(
-    colors = colorScheme,
-    content = content
-  )
+    MaterialTheme(
+        colors = colorScheme,
+        content = content,
+    )
 }

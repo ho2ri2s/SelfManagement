@@ -11,44 +11,42 @@ import retrofit2.http.POST
 import retrofit2.http.Path
 import javax.inject.Inject
 
-class SelfManagementApi @Inject constructor(
-  private val service: Service
-) {
-  constructor(retrofit: Retrofit) : this(retrofit.create<Service>())
+class SelfManagementApi
+    @Inject
+    constructor(
+        private val service: Service,
+    ) {
+        constructor(retrofit: Retrofit) : this(retrofit.create<Service>())
 
-  interface Service {
-    @GET("/user/{userId}")
-    suspend fun getUser(
-      @Path("userId") userId: String,
-    ): UserResponse
+        interface Service {
+            @GET("/user/{userId}")
+            suspend fun getUser(
+                @Path("userId") userId: String,
+            ): UserResponse
 
-    @POST("/user")
-    suspend fun register(
-      @Body registerRequest: RegisterRequest,
-    ): UserResponse
-  }
+            @POST("/user")
+            suspend fun register(
+                @Body registerRequest: RegisterRequest,
+            ): UserResponse
+        }
 
-  suspend fun getUser(
-    userId: String,
-  ): User {
-    return service.getUser(userId).toModel()
-  }
+        suspend fun getUser(userId: String): User {
+            return service.getUser(userId).toModel()
+        }
 
-  suspend fun register(
-    registerRequest: RegisterRequest,
-  ): User {
-    return service.register(registerRequest).toModel()
-  }
+        suspend fun register(registerRequest: RegisterRequest): User {
+            return service.register(registerRequest).toModel()
+        }
 
-  data class RegisterRequest(
-    val email: String,
-    val name: String,
-  )
+        data class RegisterRequest(
+            val email: String,
+            val name: String,
+        )
 
-  private fun UserResponse.toModel(): User {
-    return User(
-      id = UserId(id),
-      name = name,
-    )
-  }
-}
+        private fun UserResponse.toModel(): User {
+            return User(
+                id = UserId(id),
+                name = name,
+            )
+        }
+    }

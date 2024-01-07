@@ -11,14 +11,15 @@ import androidx.compose.ui.Modifier
 
 @Composable
 fun HomeScreen() {
-  Scaffold { innerPadding ->
-    Box(
-      modifier = Modifier
-        .fillMaxWidth()
-        .padding(innerPadding),
-      contentAlignment = Alignment.Center
-    ) {
-      Text(text = "Home")
+    Scaffold { innerPadding ->
+        Box(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(innerPadding),
+            contentAlignment = Alignment.Center,
+        ) {
+            Text(text = "Home")
+        }
     }
-  }
 }

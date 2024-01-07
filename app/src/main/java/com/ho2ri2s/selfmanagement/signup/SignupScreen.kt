@@ -42,203 +42,209 @@ import com.ho2ri2s.selfmanagement.R
 // TODO: Navigation, enterキーでのタブ移動, パスワードの非表示
 @Composable
 fun SignupScreen(
-  viewModel: SignupViewModel,
-  onClickSignup: () -> Unit,
-  modifier: Modifier = Modifier,
+    viewModel: SignupViewModel,
+    onClickSignup: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-  val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-  val shouldNavigate by viewModel.navigateState.collectAsStateWithLifecycle()
-  val snackBarState by viewModel.snackBarState.collectAsStateWithLifecycle()
-  LaunchedEffect(shouldNavigate) {
-    if (shouldNavigate) {
-      onClickSignup()
-      viewModel.onNavigated()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val shouldNavigate by viewModel.navigateState.collectAsStateWithLifecycle()
+    val snackBarState by viewModel.snackBarState.collectAsStateWithLifecycle()
+    LaunchedEffect(shouldNavigate) {
+        if (shouldNavigate) {
+            onClickSignup()
+            viewModel.onNavigated()
+        }
     }
-  }
-  SignupScreen(
-    uiState = uiState,
-    snackBarType = snackBarState,
-    onChangeEmail = viewModel::onChangeEmail,
-    onChangePassword = viewModel::onChangePassword,
-    onClickButton = viewModel::onClickSignup,
-    onShownSnackBar = viewModel::onShownSnackBar,
-    modifier = modifier,
-  )
+    SignupScreen(
+        uiState = uiState,
+        snackBarType = snackBarState,
+        onChangeEmail = viewModel::onChangeEmail,
+        onChangePassword = viewModel::onChangePassword,
+        onClickButton = viewModel::onClickSignup,
+        onShownSnackBar = viewModel::onShownSnackBar,
+        modifier = modifier,
+    )
 }
 
 @Composable
 fun SignupScreen(
-  uiState: SignupScreenUiState,
-  snackBarType: SignupSnackBarType?,
-  onChangeEmail: (String) -> Unit,
-  onChangePassword: (String) -> Unit,
-  onClickButton: () -> Unit,
-  onShownSnackBar: () -> Unit,
-  modifier: Modifier = Modifier,
+    uiState: SignupScreenUiState,
+    snackBarType: SignupSnackBarType?,
+    onChangeEmail: (String) -> Unit,
+    onChangePassword: (String) -> Unit,
+    onClickButton: () -> Unit,
+    onShownSnackBar: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-  val snackBarHostState = remember { SnackbarHostState() }
-  val context = LocalContext.current
-  LaunchedEffect(snackBarType) {
-    snackBarType ?: return@LaunchedEffect
-    val message = when (snackBarType) {
-      SignupSnackBarType.SuccessAuth -> context.resources.getString(R.string.signup_welcome)
-      SignupSnackBarType.FailedAuth -> context.resources.getString(R.string.signup_error_auth)
+    val snackBarHostState = remember { SnackbarHostState() }
+    val context = LocalContext.current
+    LaunchedEffect(snackBarType) {
+        snackBarType ?: return@LaunchedEffect
+        val message =
+            when (snackBarType) {
+                SignupSnackBarType.SuccessAuth -> context.resources.getString(R.string.signup_welcome)
+                SignupSnackBarType.FailedAuth -> context.resources.getString(R.string.signup_error_auth)
+            }
+        snackBarHostState.showSnackbar(message)
+        onShownSnackBar()
     }
-    snackBarHostState.showSnackbar(message)
-    onShownSnackBar()
-  }
-  Scaffold(
-    backgroundColor = Color(0xFF102C66),
-    snackbarHost = { SnackbarHost(snackBarHostState) },
-  ) { parentPadding ->
-    Column(
-      modifier
-        .fillMaxSize()
-        .padding(parentPadding)
-        .padding(horizontal = 16.dp),
-    ) {
-      SignupHeader(
-        modifier = Modifier
-          .align(Alignment.CenterHorizontally)
-          .weight(1f)
-      )
-      SignupInputBody(
-        emailState = uiState.emailState,
-        passwordState = uiState.passwordState,
-        isEnabledSignup = uiState.isEnabledSignup,
-        onChangeEmail = onChangeEmail,
-        onChangePassword = onChangePassword,
-        onClickButton = onClickButton,
-      )
-      Spacer(modifier = Modifier.weight(1f))
+    Scaffold(
+        backgroundColor = Color(0xFF102C66),
+        snackbarHost = { SnackbarHost(snackBarHostState) },
+    ) { parentPadding ->
+        Column(
+            modifier
+                .fillMaxSize()
+                .padding(parentPadding)
+                .padding(horizontal = 16.dp),
+        ) {
+            SignupHeader(
+                modifier =
+                    Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .weight(1f),
+            )
+            SignupInputBody(
+                emailState = uiState.emailState,
+                passwordState = uiState.passwordState,
+                isEnabledSignup = uiState.isEnabledSignup,
+                onChangeEmail = onChangeEmail,
+                onChangePassword = onChangePassword,
+                onClickButton = onClickButton,
+            )
+            Spacer(modifier = Modifier.weight(1f))
+        }
     }
-  }
 }
 
 @Composable
 fun SignupHeader(modifier: Modifier = Modifier) {
-  Column(
-    modifier = modifier.fillMaxWidth(),
-    horizontalAlignment = Alignment.CenterHorizontally,
-    verticalArrangement = Arrangement.spacedBy(8.dp, alignment = Alignment.CenterVertically)
-  ) {
-    Text(
-      text = stringResource(id = R.string.signup_welcome),
-      fontSize = 24.sp,
-      color = Color.White,
-      fontWeight = FontWeight.Bold,
-    )
-    Text(
-      text = stringResource(id = R.string.signup_welcome_message),
-      fontSize = 18.sp,
-      color = Color.White,
-    )
-  }
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(8.dp, alignment = Alignment.CenterVertically),
+    ) {
+        Text(
+            text = stringResource(id = R.string.signup_welcome),
+            fontSize = 24.sp,
+            color = Color.White,
+            fontWeight = FontWeight.Bold,
+        )
+        Text(
+            text = stringResource(id = R.string.signup_welcome_message),
+            fontSize = 18.sp,
+            color = Color.White,
+        )
+    }
 }
 
 @Composable
 fun SignupInputBody(
-  emailState: EmailState,
-  passwordState: PasswordState,
-  isEnabledSignup: Boolean,
-  onChangeEmail: (String) -> Unit,
-  onChangePassword: (String) -> Unit,
-  onClickButton: () -> Unit,
-  modifier: Modifier = Modifier,
+    emailState: EmailState,
+    passwordState: PasswordState,
+    isEnabledSignup: Boolean,
+    onChangeEmail: (String) -> Unit,
+    onChangePassword: (String) -> Unit,
+    onClickButton: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-  Surface(modifier = modifier.fillMaxWidth(), shape = RoundedCornerShape(8.dp)) {
-    Column(
-      modifier = Modifier.padding(horizontal = 48.dp, vertical = 48.dp),
-      horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-      val focusManager = LocalFocusManager.current
-      OutlinedTextField(
-        value = emailState.value,
-        onValueChange = onChangeEmail,
-        isError = emailState.type.isError,
-        singleLine = true,
-        keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
-        keyboardActions = KeyboardActions(onNext = {
-          focusManager.moveFocus(FocusDirection.Down)
-        }),
-        label = {
-          Text(text = stringResource(id = R.string.signup_email_label))
-        },
-        colors = TextFieldDefaults.outlinedTextFieldColors(),
-        modifier = Modifier.fillMaxWidth(),
-      )
-      if (emailState.type.isError) {
-        Spacer(modifier = Modifier.height(4.dp))
-        Text(
-          text = stringResource(id = R.string.signup_error_email),
-          color = Color.Red,
-          fontSize = 10.sp,
-          fontWeight = FontWeight.Bold,
-          modifier = Modifier.align(Alignment.Start)
-        )
-      }
+    Surface(modifier = modifier.fillMaxWidth(), shape = RoundedCornerShape(8.dp)) {
+        Column(
+            modifier = Modifier.padding(horizontal = 48.dp, vertical = 48.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            val focusManager = LocalFocusManager.current
+            OutlinedTextField(
+                value = emailState.value,
+                onValueChange = onChangeEmail,
+                isError = emailState.type.isError,
+                singleLine = true,
+                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
+                keyboardActions =
+                    KeyboardActions(onNext = {
+                        focusManager.moveFocus(FocusDirection.Down)
+                    }),
+                label = {
+                    Text(text = stringResource(id = R.string.signup_email_label))
+                },
+                colors = TextFieldDefaults.outlinedTextFieldColors(),
+                modifier = Modifier.fillMaxWidth(),
+            )
+            if (emailState.type.isError) {
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = stringResource(id = R.string.signup_error_email),
+                    color = Color.Red,
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.align(Alignment.Start),
+                )
+            }
 
-      Spacer(modifier = Modifier.height(16.dp))
-      OutlinedTextField(
-        value = passwordState.value,
-        onValueChange = onChangePassword,
-        isError = passwordState.type.isError,
-        singleLine = true,
-        keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
-        keyboardActions = KeyboardActions(onNext = {
-          focusManager.moveFocus(FocusDirection.Down)
-        }),
-        label = {
-          Text(text = stringResource(id = R.string.signup_password_label))
-        },
-        modifier = Modifier.fillMaxWidth(),
-      )
-      if (passwordState.type.isError) {
-        Spacer(modifier = Modifier.height(4.dp))
-        Text(
-          text = stringResource(id = R.string.signup_error_password),
-          color = Color.Red,
-          fontSize = 10.sp,
-          fontWeight = FontWeight.Bold,
-          modifier = Modifier.align(Alignment.Start)
-        )
-      }
+            Spacer(modifier = Modifier.height(16.dp))
+            OutlinedTextField(
+                value = passwordState.value,
+                onValueChange = onChangePassword,
+                isError = passwordState.type.isError,
+                singleLine = true,
+                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
+                keyboardActions =
+                    KeyboardActions(onNext = {
+                        focusManager.moveFocus(FocusDirection.Down)
+                    }),
+                label = {
+                    Text(text = stringResource(id = R.string.signup_password_label))
+                },
+                modifier = Modifier.fillMaxWidth(),
+            )
+            if (passwordState.type.isError) {
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = stringResource(id = R.string.signup_error_password),
+                    color = Color.Red,
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.align(Alignment.Start),
+                )
+            }
 
-      Spacer(modifier = Modifier.height(32.dp))
-      Button(
-        modifier = Modifier.fillMaxWidth(),
-        onClick = onClickButton,
-        colors = ButtonDefaults.buttonColors(
-          backgroundColor = Color(0xFF102C66),
-          contentColor = Color.White,
-        ),
-        enabled = isEnabledSignup,
-      ) {
-        Text(
-          text = stringResource(id = R.string.signup_button),
-          fontSize = 20.sp,
-          color = Color.White,
-          fontWeight = FontWeight.Bold,
-        )
-      }
+            Spacer(modifier = Modifier.height(32.dp))
+            Button(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = onClickButton,
+                colors =
+                    ButtonDefaults.buttonColors(
+                        backgroundColor = Color(0xFF102C66),
+                        contentColor = Color.White,
+                    ),
+                enabled = isEnabledSignup,
+            ) {
+                Text(
+                    text = stringResource(id = R.string.signup_button),
+                    fontSize = 20.sp,
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold,
+                )
+            }
+        }
     }
-  }
 }
 
 @Composable
 @Preview(device = Devices.PIXEL_4)
 fun SignupScreenPreview() {
-  val uiState = SignupScreenUiState(
-    emailState = EmailState.Initial.let { it.onChangedValue("test@test.com") },
-    passwordState = PasswordState.Initial.let { it.onChangedValue("testtest") },
-    isEnabledSignup = true,
-  )
-  SignupScreen(
-    uiState = uiState,
-    snackBarType = null,
-    onChangeEmail = {},
-    onChangePassword = {},
-    onClickButton = {},
-    onShownSnackBar = {},
-  )
+    val uiState =
+        SignupScreenUiState(
+            emailState = EmailState.Initial.let { it.onChangedValue("test@test.com") },
+            passwordState = PasswordState.Initial.let { it.onChangedValue("testtest") },
+            isEnabledSignup = true,
+        )
+    SignupScreen(
+        uiState = uiState,
+        snackBarType = null,
+        onChangeEmail = {},
+        onChangePassword = {},
+        onClickButton = {},
+        onShownSnackBar = {},
+    )
 }
