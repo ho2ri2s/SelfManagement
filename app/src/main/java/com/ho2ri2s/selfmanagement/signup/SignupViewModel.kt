@@ -25,6 +25,10 @@ class SignupViewModel @Inject constructor(
   private val mutableSnackBarState: MutableStateFlow<SignupSnackBarType?> = MutableStateFlow(null)
   val snackBarState: StateFlow<SignupSnackBarType?> = mutableSnackBarState.asStateFlow()
 
+  // TODO: navigationを良い感じにまとめる
+  private val mutableNavigateState: MutableStateFlow<Boolean> = MutableStateFlow(false)
+  val navigateState: StateFlow<Boolean> = mutableNavigateState.asStateFlow()
+
   val uiState = buildUiState(
     mutableEmailStateFlow,
     mutablePasswordStateFlow,
@@ -75,6 +79,7 @@ class SignupViewModel @Inject constructor(
     }
       .onSuccess {
         mutableSnackBarState.value = SignupSnackBarType.SuccessAuth
+        mutableNavigateState.value = true
       }
       .onFailure {
         Timber.e(it, it.message)
@@ -82,6 +87,9 @@ class SignupViewModel @Inject constructor(
       }
   }
 
+  fun onNavigated() {
+    mutableNavigateState.value = false
+  }
 }
 
 enum class SignupSnackBarType {

@@ -76,6 +76,7 @@ dependencies {
   kapt(Dep.AndroidX.LifeCycle.processor)
 
   implementation(Dep.Hilt.core)
+  implementation(Dep.Hilt.navigationCompose)
   kapt(Dep.Hilt.compiler)
 
   implementation(Dep.Arrow.core)
@@ -93,6 +94,7 @@ dependencies {
   implementation(Dep.AndroidX.Compose.viewModel)
   implementation(Dep.AndroidX.Compose.navigation)
   implementation(Dep.AndroidX.Compose.coil)
+  implementation(Dep.navigationCompose)
 
   implementation(platform(Dep.Firebase.bom))
   implementation(Dep.Firebase.dynamicLinksKtx)

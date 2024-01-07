@@ -69,6 +69,7 @@ object Dep {
     const val core = "com.google.dagger:hilt-android:${Versions.hilt}"
     const val compiler = "com.google.dagger:hilt-android-compiler:${Versions.hilt}"
     const val test = "'com.google.dagger:hilt-android-testing:${Versions.hilt}"
+    const val navigationCompose = "androidx.hilt:hilt-navigation-compose:1.1.0"
   }
 
   object Arrow {
@@ -108,6 +109,8 @@ object Dep {
 
     const val truth = "com.google.truth:truth:1.1.3"
   }
+
+  const val navigationCompose = "androidx.navigation:navigation-compose:2.7.5"
 
   const val window = "androidx.window:window:1.0.0-beta03"
   const val timber = "com.jakewharton.timber:timber:${Versions.timber}"
