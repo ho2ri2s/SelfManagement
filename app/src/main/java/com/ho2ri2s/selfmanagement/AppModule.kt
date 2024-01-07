@@ -12,10 +12,9 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 @Module
 class AppModule {
-
-  @Provides
-  @Singleton
-  fun provideFirebaseAuth(): FirebaseAuth {
-    return Firebase.auth
-  }
+    @Provides
+    @Singleton
+    fun provideFirebaseAuth(): FirebaseAuth {
+        return Firebase.auth
+    }
 }

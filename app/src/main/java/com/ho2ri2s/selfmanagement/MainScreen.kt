@@ -10,18 +10,18 @@ import com.ho2ri2s.selfmanagement.signup.SignupScreen
 
 @Composable
 fun MainScreen() {
-  val navController = rememberNavController()
-  NavHost(navController = navController, startDestination = "signup") {
-    composable("home") {
-      HomeScreen()
-    }
-    composable("signup") {
-      SignupScreen(
-        viewModel = hiltViewModel(),
-        onClickSignup = {
-          navController.navigate("home")
+    val navController = rememberNavController()
+    NavHost(navController = navController, startDestination = "signup") {
+        composable("home") {
+            HomeScreen()
         }
-      )
+        composable("signup") {
+            SignupScreen(
+                viewModel = hiltViewModel(),
+                onClickSignup = {
+                    navController.navigate("home")
+                },
+            )
+        }
     }
-  }
 }
