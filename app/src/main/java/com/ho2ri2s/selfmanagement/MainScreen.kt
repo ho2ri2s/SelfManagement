@@ -5,15 +5,15 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.ho2ri2s.selfmanagement.home.HomeScreen
+import com.ho2ri2s.selfmanagement.expense.ExpenseScreen
 import com.ho2ri2s.selfmanagement.signup.SignupScreen
 
 @Composable
 fun MainScreen() {
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = "signup") {
-        composable("home") {
-            HomeScreen()
+    NavHost(navController = navController, startDestination = "expense") {
+        composable("expense") {
+            ExpenseScreen()
         }
         composable("signup") {
             SignupScreen(
