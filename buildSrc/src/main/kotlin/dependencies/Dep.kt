@@ -114,4 +114,5 @@ object Dep {
 
   const val window = "androidx.window:window:1.0.0-beta03"
   const val timber = "com.jakewharton.timber:timber:${Versions.timber}"
+  const val chart = "com.github.tehras:charts:0.2.4-alpha"
 }
