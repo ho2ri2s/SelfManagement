@@ -11,3 +11,4 @@ val MediumEmphasis = Color(0xff696969)
 val MediumEmphasisDark = Color(0xff979797)
 
 val DarkBlue = Color(0xFF102C66)
+val WeakWhite = Color(0xFFEEEEEE)

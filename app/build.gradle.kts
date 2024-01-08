@@ -28,7 +28,10 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro",
+            )
         }
     }
     compileOptions {
@@ -112,6 +115,7 @@ dependencies {
 
     implementation(Dep.window)
     implementation(Dep.timber)
+    implementation(Dep.chart)
 
     // Test
     testImplementation(Dep.Test.junit)

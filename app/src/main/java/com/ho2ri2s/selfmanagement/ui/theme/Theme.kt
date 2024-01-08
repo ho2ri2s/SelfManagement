@@ -11,16 +11,18 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
+// TODO: tonal color palette 決める
 private val SelfManagementColors =
     lightColors(
         primary = DarkBlue,
         primaryVariant = DarkBlue,
         onPrimary = Color.White,
         secondary = MediumEmphasis,
-        secondaryVariant = Red900,
+        secondaryVariant = MediumEmphasisDark,
         onSecondary = Color.White,
         error = Red800,
-        onBackground = Color.Black,
+        background = WeakWhite,
+        surface = Color.White,
     )
 
 @Composable
