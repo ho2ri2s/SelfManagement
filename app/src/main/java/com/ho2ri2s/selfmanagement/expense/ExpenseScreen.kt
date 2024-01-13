@@ -1,23 +1,30 @@
 package com.ho2ri2s.selfmanagement.expense
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.Divider
+import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -31,18 +38,24 @@ import com.ho2ri2s.selfmanagement.model.Income
 import com.ho2ri2s.selfmanagement.model.Outcome
 
 @Composable
-fun ExpenseScreen(viewModel: ExpenseViewModel = hiltViewModel()) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+fun ExpenseScreen(
+    onClickCreateButton: () -> Unit,
+    viewModel: ExpenseViewModel = hiltViewModel(),
+) {
+    val uiState by viewModel.expenseUiState.collectAsStateWithLifecycle()
     LaunchedEffect(Unit) {
         viewModel.onShowScreen()
     }
-    ExpenseScreen(uiState)
+    ExpenseScreen(uiState, onClickCreateButton)
 }
 
 @Composable
-fun ExpenseScreen(uiState: ExpenseScreenUiModel) {
+fun ExpenseScreen(
+    uiState: ExpenseScreenUiState,
+    onClickCreateButton: () -> Unit,
+) {
     Scaffold(
-        topBar = { ExpenseAppBar() },
+        topBar = { ExpenseAppBar(onClickCreateButton = onClickCreateButton) },
         backgroundColor = MaterialTheme.colors.background,
     ) { innerPadding ->
         Column(
@@ -61,7 +74,10 @@ fun ExpenseScreen(uiState: ExpenseScreenUiModel) {
 }
 
 @Composable
-private fun ExpenseAppBar(modifier: Modifier = Modifier) {
+private fun ExpenseAppBar(
+    onClickCreateButton: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     TopAppBar(
         title = {
             Text(
@@ -70,6 +86,17 @@ private fun ExpenseAppBar(modifier: Modifier = Modifier) {
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,
             )
+        },
+        actions = {
+            Box(
+                modifier =
+                    Modifier
+                        .size(60.dp)
+                        .clickable { onClickCreateButton() },
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(Icons.Filled.Add, contentDescription = null)
+            }
         },
         modifier = modifier.height(60.dp),
         elevation = 2.dp,
