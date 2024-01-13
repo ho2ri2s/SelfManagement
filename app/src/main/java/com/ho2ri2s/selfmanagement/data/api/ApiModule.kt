@@ -47,7 +47,13 @@ object ApiModule {
 
     @Provides
     @Singleton
-    fun provideSelfManagementApi(retrofit: Retrofit): SelfManagementApi {
-        return SelfManagementApi(retrofit)
+    fun provideUserApi(retrofit: Retrofit): UserApiClient {
+        return UserApiClient(retrofit)
+    }
+
+    @Provides
+    @Singleton
+    fun provideExpenseApi(retrofit: Retrofit): ExpenseApiClient {
+        return ExpenseApiClient(retrofit)
     }
 }

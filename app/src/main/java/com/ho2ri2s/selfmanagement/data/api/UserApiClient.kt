@@ -11,7 +11,7 @@ import retrofit2.http.POST
 import retrofit2.http.Path
 import javax.inject.Inject
 
-class SelfManagementApi
+class UserApiClient
     @Inject
     constructor(
         private val service: Service,

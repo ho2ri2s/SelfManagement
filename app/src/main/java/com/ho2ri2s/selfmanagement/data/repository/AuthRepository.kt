@@ -1,6 +1,7 @@
 package com.ho2ri2s.selfmanagement.data.repository
 
 import com.ho2ri2s.selfmanagement.model.User
+import com.ho2ri2s.selfmanagement.model.UserId
 
 interface AuthRepository {
     suspend fun signupWithEmailPassword(
@@ -12,4 +13,6 @@ interface AuthRepository {
         email: String,
         name: String,
     ): User
+
+    suspend fun getUserId(): UserId
 }
