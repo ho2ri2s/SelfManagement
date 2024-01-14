@@ -3,41 +3,32 @@ package com.ho2ri2s.selfmanagement.data.repository
 import com.google.firebase.auth.FirebaseAuth
 import com.ho2ri2s.selfmanagement.data.api.UserApiClient
 import com.ho2ri2s.selfmanagement.model.User
-import com.ho2ri2s.selfmanagement.model.UserId
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
 import javax.inject.Inject
 
-class AuthRepositoryImpl
-    @Inject
-    constructor(
-        private val auth: FirebaseAuth,
-        private val selfManagementApi: UserApiClient,
-    ) : AuthRepository {
-        override suspend fun signupWithEmailPassword(
-            email: String,
-            password: String,
-        ) {
-            if (auth.currentUser != null) {
-                // TODO: すでにログイン済みなので、ログイン画面に飛ばす
-                throw IllegalStateException("Already SignIn")
-            }
-            val result = auth.createUserWithEmailAndPassword(email, password).await()
-            Timber.d("mytag user = ${result.user?.email}, ${result.user?.uid}")
+class AuthRepositoryImpl @Inject constructor(
+    private val auth: FirebaseAuth,
+    private val selfManagementApi: UserApiClient,
+) : AuthRepository {
+    override suspend fun signupWithEmailPassword(
+        email: String,
+        password: String,
+    ) {
+        if (auth.currentUser != null) {
+            // TODO: すでにログイン済みなので、ログイン画面に飛ばす
+            throw IllegalStateException("Already SignIn")
         }
-
-        override suspend fun register(
-            email: String,
-            name: String,
-        ): User {
-            // TODO: name入力
-            val name = "testhoris"
-            return selfManagementApi.register(UserApiClient.RegisterRequest(email, name))
-        }
-
-        override suspend fun getUserId(): UserId {
-            auth.currentUser?.let {
-                return UserId(it.uid)
-            } ?: throw IllegalStateException("Not SignIn")
-        }
+        val result = auth.createUserWithEmailAndPassword(email, password).await()
+        Timber.d("mytag user = ${result.user?.email}, ${result.user?.uid}")
     }
+
+    override suspend fun register(
+        email: String,
+        name: String,
+    ): User {
+        // TODO: name入力
+        val name = "testhoris"
+        return selfManagementApi.register(UserApiClient.RegisterRequest(email, name))
+    }
+}

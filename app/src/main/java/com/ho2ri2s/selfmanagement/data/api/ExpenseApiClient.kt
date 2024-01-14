@@ -1,6 +1,5 @@
 package com.ho2ri2s.selfmanagement.data.api
 
-import com.ho2ri2s.selfmanagement.model.UserId
 import com.squareup.moshi.Json
 import retrofit2.Retrofit
 import retrofit2.create
@@ -25,14 +24,12 @@ class ExpenseApiClient
         }
 
         suspend fun createIncome(
-            userId: UserId,
             year: Int,
             month: Int,
             amount: Int,
         ) {
             val request =
                 CreateIncomeRequest(
-                    userId = userId.value,
                     year = year,
                     month = month,
                     amount = amount,
@@ -42,7 +39,6 @@ class ExpenseApiClient
 
         data class CreateIncomeRequest(
             @Json(name = "user_uuid")
-            val userId: String,
             val year: Int,
             val month: Int,
             val amount: Int,

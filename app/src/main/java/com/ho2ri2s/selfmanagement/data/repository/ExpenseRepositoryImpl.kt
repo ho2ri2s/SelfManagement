@@ -12,7 +12,6 @@ class ExpenseRepositoryImpl @Inject constructor(
         month: Int,
         amount: Int,
     ) {
-        val userId = authRepository.getUserId()
-        expenseApi.createIncome(userId, year, month, amount)
+        expenseApi.createIncome(year, month, amount)
     }
 }
