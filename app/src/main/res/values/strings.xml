@@ -10,4 +10,6 @@
     <string name="signup_error_auth">認証に失敗しました</string>
 
     <string name="income_save">保存する</string>
+    <string name="income_title">Income</string>
+    <string name="outcome_title">Outcome</string>
 </resources>

@@ -12,20 +12,29 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.ModalBottomSheetLayout
+import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -34,50 +43,61 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.github.tehras.charts.piechart.PieChart
 import com.github.tehras.charts.piechart.PieChartData
 import com.google.common.collect.ImmutableList
+import com.ho2ri2s.selfmanagement.R
 import com.ho2ri2s.selfmanagement.model.Income
 import com.ho2ri2s.selfmanagement.model.Outcome
+import kotlinx.coroutines.launch
 
 @Composable
 fun ExpenseScreen(
-    onClickCreateButton: () -> Unit,
     viewModel: ExpenseViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.expenseUiState.collectAsStateWithLifecycle()
     LaunchedEffect(Unit) {
         viewModel.onShowScreen()
     }
-    ExpenseScreen(uiState, onClickCreateButton)
+    ExpenseScreen(uiState)
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ExpenseScreen(
     uiState: ExpenseScreenUiState,
-    onClickCreateButton: () -> Unit,
 ) {
-    Scaffold(
-        topBar = { ExpenseAppBar(onClickCreateButton = onClickCreateButton) },
-        backgroundColor = MaterialTheme.colors.background,
-    ) { innerPadding ->
-        Column(
-            modifier =
+    val sheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
+    ModalBottomSheetLayout(
+        sheetContent = {
+            InputIncomeScreen()
+        },
+        sheetState = sheetState,
+        sheetShape = RoundedCornerShape(16.dp),
+    ) {
+        Scaffold(
+            topBar = { ExpenseAppBar(onClickCreateButton = { sheetState.show() }) },
+            backgroundColor = MaterialTheme.colors.background,
+        ) { innerPadding ->
+            Column(
+                modifier =
                 Modifier
                     .padding(innerPadding)
                     .padding(24.dp),
-        ) {
-            ExpensePieChart()
-            Spacer(modifier = Modifier.height(16.dp))
-            IncomeComponent(uiState.expense?.income)
-            Spacer(modifier = Modifier.height(16.dp))
-            OutcomeList(uiState.expense?.outcomes ?: ImmutableList.of())
+            ) {
+                ExpensePieChart()
+                Spacer(modifier = Modifier.height(16.dp))
+                IncomeComponent(uiState.expense?.income)
+                Spacer(modifier = Modifier.height(16.dp))
+                OutcomeList(uiState.expense?.outcomes ?: ImmutableList.of())
+            }
         }
     }
 }
 
 @Composable
 private fun ExpenseAppBar(
-    onClickCreateButton: () -> Unit,
+    onClickCreateButton: suspend () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val scope = rememberCoroutineScope()
     TopAppBar(
         title = {
             Text(
@@ -90,9 +110,9 @@ private fun ExpenseAppBar(
         actions = {
             Box(
                 modifier =
-                    Modifier
-                        .size(60.dp)
-                        .clickable { onClickCreateButton() },
+                Modifier
+                    .size(60.dp)
+                    .clickable { scope.launch { onClickCreateButton() } },
                 contentAlignment = Alignment.Center,
             ) {
                 Icon(Icons.Filled.Add, contentDescription = null)
@@ -108,9 +128,9 @@ private fun ExpenseAppBar(
 private fun ExpensePieChart(modifier: Modifier = Modifier) {
     Surface(
         modifier =
-            modifier
-                .fillMaxWidth()
-                .height(300.dp),
+        modifier
+            .fillMaxWidth()
+            .height(300.dp),
         color = MaterialTheme.colors.surface,
     ) {
         val slice =
@@ -139,7 +159,11 @@ private fun IncomeComponent(
         modifier = modifier.fillMaxWidth(),
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text(text = "Income", fontSize = 20.sp)
+            Text(
+                text = stringResource(id = R.string.income_title),
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold
+            )
             Spacer(modifier = Modifier.height(16.dp))
             Row(horizontalArrangement = Arrangement.SpaceBetween) {
                 Text(text = "2024年1月", fontSize = 16.sp)
@@ -161,7 +185,12 @@ private fun OutcomeList(
     ) {
         LazyColumn(modifier = Modifier.padding(16.dp)) {
             item {
-                Text(text = "Outcome", fontSize = 20.sp, modifier = Modifier.padding(bottom = 8.dp))
+                Text(
+                    text = stringResource(id = R.string.outcome_title),
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
             }
             itemsIndexed(outcomes) { index, outcome ->
                 OutcomeItem(outcome)

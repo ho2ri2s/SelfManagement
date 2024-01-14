@@ -23,6 +23,7 @@ private val SelfManagementColors =
         error = Red800,
         background = WeakWhite,
         surface = Color.White,
+        onSurface = Color.Black,
     )
 
 @Composable
