@@ -13,13 +13,15 @@ fun MainScreen() {
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = "expense") {
         composable("expense") {
-            ExpenseScreen()
+            ExpenseScreen(
+                viewModel = hiltViewModel(),
+            )
         }
         composable("signup") {
             SignupScreen(
                 viewModel = hiltViewModel(),
                 onClickSignup = {
-                    navController.navigate("home")
+                    navController.navigate("expense")
                 },
             )
         }

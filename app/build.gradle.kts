@@ -133,12 +133,7 @@ dependencies {
 val ktlint by configurations.creating
 
 dependencies {
-    ktlint("com.pinterest.ktlint:ktlint-cli:1.1.0") {
-        attributes {
-            attribute(Bundling.BUNDLING_ATTRIBUTE, objects.named(Bundling.EXTERNAL))
-        }
-    }
-    // ktlint(project(":custom-ktlint-ruleset")) // in case of custom ruleset
+    ktlint("com.pinterest:ktlint:0.43.1")
 }
 
 val ktlintCheck by tasks.registering(JavaExec::class) {

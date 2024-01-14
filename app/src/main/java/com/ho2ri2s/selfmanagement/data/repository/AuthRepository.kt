@@ -12,4 +12,5 @@ interface AuthRepository {
         email: String,
         name: String,
     ): User
+
 }

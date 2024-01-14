@@ -21,11 +21,11 @@ class ExpenseViewModel
         private val mutableExpenseStateFlow: MutableStateFlow<Expense?> =
             MutableStateFlow(null)
 
-        val uiState: StateFlow<ExpenseScreenUiModel> =
+        val expenseUiState: StateFlow<ExpenseScreenUiState> =
             buildUiState(
                 mutableExpenseStateFlow,
             ) { expense ->
-                ExpenseScreenUiModel(expense)
+                ExpenseScreenUiState(expense)
             }
 
         fun onShowScreen() {

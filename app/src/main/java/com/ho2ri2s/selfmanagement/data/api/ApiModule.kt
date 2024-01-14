@@ -33,7 +33,8 @@ object ApiModule {
     @Singleton
     fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
         // TODO: kotlin serializationに書き換える
-        val baseUrl = "https://selfmanageapp.onrender.com"
+//        val baseUrl = "https://selfmanageapp.onrender.com"
+        val baseUrl = "http://10.0.2.2:8080"
         val moshi =
             Moshi.Builder()
                 .add(KotlinJsonAdapterFactory())
@@ -47,7 +48,13 @@ object ApiModule {
 
     @Provides
     @Singleton
-    fun provideSelfManagementApi(retrofit: Retrofit): SelfManagementApi {
-        return SelfManagementApi(retrofit)
+    fun provideUserApi(retrofit: Retrofit): UserApiClient {
+        return UserApiClient(retrofit)
+    }
+
+    @Provides
+    @Singleton
+    fun provideExpenseApi(retrofit: Retrofit): ExpenseApiClient {
+        return ExpenseApiClient(retrofit)
     }
 }
