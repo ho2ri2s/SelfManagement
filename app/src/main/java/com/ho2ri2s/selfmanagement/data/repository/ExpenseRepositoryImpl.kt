@@ -14,4 +14,14 @@ class ExpenseRepositoryImpl @Inject constructor(
     ) {
         expenseApi.createIncome(year, month, amount)
     }
+
+    override suspend fun createOutcome(
+        year: Int,
+        month: Int,
+        day: Int,
+        title: String,
+        amount: Int
+    ) {
+
+    }
 }
