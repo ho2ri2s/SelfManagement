@@ -67,7 +67,7 @@ fun ExpenseScreen(
     ModalBottomSheetLayout(
         sheetContent = {
             InputIncomeBottomSheet()
-            InputOutcomeBottomSheet()
+//            InputOutcomeBottomSheet()
         },
         sheetState = sheetState,
         sheetShape = RoundedCornerShape(16.dp),
