@@ -11,7 +11,7 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
-// TODO: editは savedStateHandleで受け取る
+// TODO: editは savedStateHandleで受け取る, Inputは月に一個
 @HiltViewModel
 class InputIncomeViewModel @Inject constructor(
     private val expenseRepository: ExpenseRepository,

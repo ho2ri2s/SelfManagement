@@ -32,7 +32,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -67,7 +66,8 @@ fun ExpenseScreen(
     val sheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
     ModalBottomSheetLayout(
         sheetContent = {
-            InputIncomeScreen()
+//            InputIncomeScreen()
+            InputOutcomeBottomSheet()
         },
         sheetState = sheetState,
         sheetShape = RoundedCornerShape(16.dp),
@@ -160,7 +160,7 @@ private fun IncomeComponent(
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
-                text = stringResource(id = R.string.income_title),
+                text = stringResource(id = R.string.income),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -186,7 +186,7 @@ private fun OutcomeList(
         LazyColumn(modifier = Modifier.padding(16.dp)) {
             item {
                 Text(
-                    text = stringResource(id = R.string.outcome_title),
+                    text = stringResource(id = R.string.outcome),
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(bottom = 8.dp)

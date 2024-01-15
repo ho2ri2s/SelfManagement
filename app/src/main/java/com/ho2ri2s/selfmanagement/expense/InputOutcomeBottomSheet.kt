@@ -26,19 +26,23 @@ import com.ho2ri2s.selfmanagement.R
 import com.ho2ri2s.selfmanagement.ui.theme.MediumEmphasis
 
 @Composable
-fun InputIncomeScreen(viewModel: InputIncomeViewModel = hiltViewModel()) {
-    val uiState by viewModel.amountUiState.collectAsStateWithLifecycle()
-    InputIncomeScreen(
+fun InputOutcomeBottomSheet(
+    viewModel: InputOutcomeViewModel = hiltViewModel()
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    InputOutcomeBottomSheet(
         uiState = uiState,
-        onChangeIncomeAmount = viewModel::onChangeIncomeAmount,
+        onChangeOutcomeTitle = viewModel::onChangeOutcomeTitle,
+        onChangeOutcomeAmount = viewModel::onChangeOutcomeAmount,
         onClickSave = viewModel::onClickSave,
     )
 }
 
 @Composable
-fun InputIncomeScreen(
-    uiState: InputIncomeScreenUiState,
-    onChangeIncomeAmount: (String) -> Unit = {},
+fun InputOutcomeBottomSheet(
+    uiState: InputOutcomeScreenUiState,
+    onChangeOutcomeTitle: (String) -> Unit = {},
+    onChangeOutcomeAmount: (String) -> Unit = {},
     onClickSave: () -> Unit = {},
 ) {
     Column(
@@ -46,14 +50,29 @@ fun InputIncomeScreen(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Text(
-            text = stringResource(id = R.string.income_title),
+            text = stringResource(id = R.string.outcome),
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
         )
         // TODO: IMEの表示でレイアウトの位置を変える
         OutlinedTextField(
+            value = uiState.title,
+            onValueChange = onChangeOutcomeTitle,
+            keyboardOptions = KeyboardOptions.Default.copy(
+                keyboardType = KeyboardType.Text,
+                imeAction = ImeAction.Done,
+            ),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                placeholderColor = MediumEmphasis,
+            ),
+            label = {
+                Text(text = stringResource(id = R.string.outcome_title))
+            },
+            modifier = Modifier.fillMaxWidth(),
+        )
+        OutlinedTextField(
             value = uiState.amount,
-            onValueChange = onChangeIncomeAmount,
+            onValueChange = onChangeOutcomeAmount,
             keyboardOptions =
             KeyboardOptions.Default.copy(
                 keyboardType = KeyboardType.Number,
@@ -62,7 +81,9 @@ fun InputIncomeScreen(
             colors = TextFieldDefaults.outlinedTextFieldColors(
                 placeholderColor = MediumEmphasis,
             ),
-            placeholder = { Text("0") },
+            label = {
+                Text(stringResource(id = R.string.outcome_amount))
+            },
             modifier = Modifier.fillMaxWidth(),
         )
         Button(
@@ -76,7 +97,7 @@ fun InputIncomeScreen(
             enabled = true, // TODO: validation
         ) {
             Text(
-                text = stringResource(id = R.string.income_save),
+                text = stringResource(id = R.string.outcome_save),
                 fontSize = 20.sp,
                 color = Color.White,
                 fontWeight = FontWeight.Bold,
