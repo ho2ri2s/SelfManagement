@@ -26,9 +26,9 @@ import com.ho2ri2s.selfmanagement.R
 import com.ho2ri2s.selfmanagement.ui.theme.MediumEmphasis
 
 @Composable
-fun InputIncomeScreen(viewModel: InputIncomeViewModel = hiltViewModel()) {
+fun InputIncomeBottomSheet(viewModel: InputIncomeViewModel = hiltViewModel()) {
     val uiState by viewModel.amountUiState.collectAsStateWithLifecycle()
-    InputIncomeScreen(
+    InputIncomeBottomSheet(
         uiState = uiState,
         onChangeIncomeAmount = viewModel::onChangeIncomeAmount,
         onClickSave = viewModel::onClickSave,
@@ -36,7 +36,7 @@ fun InputIncomeScreen(viewModel: InputIncomeViewModel = hiltViewModel()) {
 }
 
 @Composable
-fun InputIncomeScreen(
+fun InputIncomeBottomSheet(
     uiState: InputIncomeScreenUiState,
     onChangeIncomeAmount: (String) -> Unit = {},
     onClickSave: () -> Unit = {},

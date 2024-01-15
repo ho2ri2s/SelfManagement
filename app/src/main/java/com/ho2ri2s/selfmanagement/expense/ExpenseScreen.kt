@@ -66,7 +66,7 @@ fun ExpenseScreen(
     val sheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
     ModalBottomSheetLayout(
         sheetContent = {
-//            InputIncomeScreen()
+            InputIncomeBottomSheet()
             InputOutcomeBottomSheet()
         },
         sheetState = sheetState,
