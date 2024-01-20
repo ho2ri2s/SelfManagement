@@ -1,5 +1,7 @@
 package com.ho2ri2s.selfmanagement.model
 
+import com.squareup.moshi.JsonClass
+
 data class Income(
     val id: IncomeId,
     val amount: Int,

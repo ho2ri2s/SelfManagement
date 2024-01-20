@@ -1,5 +1,7 @@
 package com.ho2ri2s.selfmanagement.data.repository
 
+import com.ho2ri2s.selfmanagement.model.Expense
+
 interface ExpenseRepository {
     suspend fun createIncome(
         year: Int,
@@ -7,13 +9,6 @@ interface ExpenseRepository {
         amount: Int,
     )
 
-    /*
-        "year": "int",
-    "month": "int",
-    "amount": "int", // 支出額
-    "title": "string", // 支出タイトル
-    "day": "int", // 支出日
-     */
     suspend fun createOutcome(
         year: Int,
         month: Int,
@@ -21,4 +16,9 @@ interface ExpenseRepository {
         title: String,
         amount: Int,
     )
+
+    suspend fun getExpense(
+        year: Int,
+        month: Int,
+    ): Expense
 }
