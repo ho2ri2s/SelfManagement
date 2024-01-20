@@ -5,7 +5,6 @@ import javax.inject.Inject
 
 class ExpenseRepositoryImpl @Inject constructor(
     private val expenseApi: ExpenseApiClient,
-    private val authRepository: AuthRepository,
 ) : ExpenseRepository {
     override suspend fun createIncome(
         year: Int,
@@ -13,5 +12,15 @@ class ExpenseRepositoryImpl @Inject constructor(
         amount: Int,
     ) {
         expenseApi.createIncome(year, month, amount)
+    }
+
+    override suspend fun createOutcome(
+        year: Int,
+        month: Int,
+        day: Int,
+        title: String,
+        amount: Int
+    ) {
+        expenseApi.createOutcome(year, month, day, title, amount)
     }
 }

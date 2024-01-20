@@ -32,7 +32,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -40,8 +39,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.github.tehras.charts.piechart.PieChart
-import com.github.tehras.charts.piechart.PieChartData
+import co.yml.charts.common.model.PlotType
+import co.yml.charts.ui.piechart.charts.PieChart
+import co.yml.charts.ui.piechart.models.PieChartConfig
+import co.yml.charts.ui.piechart.models.PieChartData
 import com.google.common.collect.ImmutableList
 import com.ho2ri2s.selfmanagement.R
 import com.ho2ri2s.selfmanagement.model.Income
@@ -65,9 +66,11 @@ fun ExpenseScreen(
     uiState: ExpenseScreenUiState,
 ) {
     val sheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
+
     ModalBottomSheetLayout(
         sheetContent = {
-            InputIncomeScreen()
+            InputIncomeBottomSheet()
+//            InputOutcomeBottomSheet()
         },
         sheetState = sheetState,
         sheetShape = RoundedCornerShape(16.dp),
@@ -137,14 +140,26 @@ private fun ExpensePieChart(modifier: Modifier = Modifier) {
             PieChartData.Slice(
                 value = 0.3f,
                 color = MaterialTheme.colors.primary,
+                label = "食費",
             )
         val slice2 =
             PieChartData.Slice(
                 value = 0.7f,
                 color = MaterialTheme.colors.secondary,
+                label = "その他",
             )
+        val data = PieChartData(
+            slices = listOf(slice, slice2),
+            plotType = PlotType.Pie,
+        )
+        val config = PieChartConfig(
+            isAnimationEnable = true,
+            showSliceLabels = true,
+            animationDuration = 500
+        )
         PieChart(
-            pieChartData = PieChartData(listOf(slice, slice2)),
+            pieChartData = data,
+            pieChartConfig = config,
             modifier = Modifier.padding(32.dp),
         )
     }
@@ -160,7 +175,7 @@ private fun IncomeComponent(
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
-                text = stringResource(id = R.string.income_title),
+                text = stringResource(id = R.string.income),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -186,7 +201,7 @@ private fun OutcomeList(
         LazyColumn(modifier = Modifier.padding(16.dp)) {
             item {
                 Text(
-                    text = stringResource(id = R.string.outcome_title),
+                    text = stringResource(id = R.string.outcome),
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(bottom = 8.dp)
