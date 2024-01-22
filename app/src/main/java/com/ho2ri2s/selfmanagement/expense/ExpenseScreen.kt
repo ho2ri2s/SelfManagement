@@ -61,8 +61,14 @@ fun ExpenseScreen(
     viewModel: ExpenseViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.expenseUiState.collectAsStateWithLifecycle()
+    val needReload by viewModel.needReloadStateFlow.collectAsStateWithLifecycle()
     LaunchedEffect(Unit) {
         viewModel.onShowScreen()
+    }
+    LaunchedEffect(needReload) {
+        if (needReload) {
+            viewModel.onReload()
+        }
     }
     ExpenseScreen(uiState)
 }
@@ -76,19 +82,24 @@ fun ExpenseScreen(
     var isIncomeInputMode by remember { mutableStateOf(true) }
     val coroutineScope = rememberCoroutineScope()
 
+    val onClickSave: () -> Unit = {
+        coroutineScope.launch {
+            sheetState.hide()
+        }
+    }
     ModalBottomSheetLayout(
         sheetContent = {
             if (isIncomeInputMode) {
-                InputIncomeBottomSheet()
+                InputIncomeBottomSheet(onClickSave = onClickSave)
             } else {
-                InputOutcomeBottomSheet()
+                InputOutcomeBottomSheet(onClickSave = onClickSave)
             }
         },
         sheetState = sheetState,
         sheetShape = RoundedCornerShape(16.dp),
     ) {
         Scaffold(
-            topBar = { ExpenseAppBar(onClickCreateButton = { sheetState.show() }) },
+            topBar = { ExpenseAppBar() },
             backgroundColor = MaterialTheme.colors.background,
         ) { innerPadding ->
             Column(
@@ -125,7 +136,6 @@ fun ExpenseScreen(
 
 @Composable
 private fun ExpenseAppBar(
-    onClickCreateButton: suspend () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val scope = rememberCoroutineScope()
@@ -137,17 +147,6 @@ private fun ExpenseAppBar(
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,
             )
-        },
-        actions = {
-            Box(
-                modifier =
-                Modifier
-                    .size(60.dp)
-                    .clickable { scope.launch { onClickCreateButton() } },
-                contentAlignment = Alignment.Center,
-            ) {
-                Icon(Icons.Filled.Add, contentDescription = null)
-            }
         },
         modifier = modifier.height(60.dp),
         elevation = 2.dp,
@@ -258,7 +257,8 @@ private fun OutcomeList(
                     Spacer(modifier = Modifier.weight(1f))
                     IconButton(
                         onClick = { onCreateOutcomeClicked() },
-                        modifier = Modifier.background(DarkBlue, RoundedCornerShape(4.dp)),
+                        modifier = Modifier
+                            .background(DarkBlue, RoundedCornerShape(4.dp)),
                     ) {
                         Icon(
                             Icons.Filled.Add,

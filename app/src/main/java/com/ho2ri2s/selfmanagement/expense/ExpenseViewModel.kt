@@ -24,6 +24,8 @@ class ExpenseViewModel @Inject constructor(
     private val mutableExpenseStateFlow: MutableStateFlow<Expense?> =
         MutableStateFlow(null)
 
+
+    val needReloadStateFlow = expenseRepository.needReloadStateFlow
     val expenseUiState: StateFlow<ExpenseScreenUiState> =
         buildUiState(
             mutableExpenseStateFlow,
@@ -45,5 +47,10 @@ class ExpenseViewModel @Inject constructor(
                 // TODO: エラーハンドリング
             }
         }
+    }
+
+    fun onReload() {
+        fetchExpense()
+        expenseRepository.onReloaded()
     }
 }

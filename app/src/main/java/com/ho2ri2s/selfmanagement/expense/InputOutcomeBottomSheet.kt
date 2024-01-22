@@ -27,14 +27,18 @@ import com.ho2ri2s.selfmanagement.ui.theme.MediumEmphasis
 
 @Composable
 fun InputOutcomeBottomSheet(
-    viewModel: InputOutcomeViewModel = hiltViewModel()
+    viewModel: InputOutcomeViewModel = hiltViewModel(),
+    onClickSave: () -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     InputOutcomeBottomSheet(
         uiState = uiState,
         onChangeOutcomeTitle = viewModel::onChangeOutcomeTitle,
         onChangeOutcomeAmount = viewModel::onChangeOutcomeAmount,
-        onClickSave = viewModel::onClickSave,
+        onClickSave = {
+            onClickSave()
+            viewModel.onClickSave()
+        },
     )
 }
 
@@ -68,6 +72,7 @@ fun InputOutcomeBottomSheet(
             label = {
                 Text(text = stringResource(id = R.string.outcome_title))
             },
+            maxLines = 1,
             modifier = Modifier.fillMaxWidth(),
         )
         OutlinedTextField(
@@ -84,6 +89,7 @@ fun InputOutcomeBottomSheet(
             label = {
                 Text(stringResource(id = R.string.outcome_amount))
             },
+            maxLines = 1,
             modifier = Modifier.fillMaxWidth(),
         )
         Button(
