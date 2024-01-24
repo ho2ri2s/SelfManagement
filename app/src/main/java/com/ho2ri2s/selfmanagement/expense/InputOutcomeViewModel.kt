@@ -39,7 +39,7 @@ class InputOutcomeViewModel @Inject constructor(
         viewModelScope.launch {
             if (isInputDataValid()) {
                 expenseRepository.createOutcome(
-                    year = 2021,
+                    year = 2024,
                     month = 1,
                     day = 1,
                     title = mutableTitleStateFlow.value,

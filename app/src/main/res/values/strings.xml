@@ -11,8 +11,10 @@
 
     <string name="income_save">保存する</string>
     <string name="income">Income</string>
+    <string name="income_create">追加</string>
     <string name="outcome">Outcome</string>
     <string name="outcome_title">Title</string>
     <string name="outcome_amount">Amount</string>
     <string name="outcome_save">保存する</string>
+    <string name="outcome_create">追加</string>
 </resources>

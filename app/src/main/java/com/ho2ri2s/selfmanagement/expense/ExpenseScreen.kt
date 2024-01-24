@@ -1,5 +1,6 @@
 package com.ho2ri2s.selfmanagement.expense
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,6 +17,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetValue
@@ -29,9 +31,13 @@ import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -47,6 +53,7 @@ import com.google.common.collect.ImmutableList
 import com.ho2ri2s.selfmanagement.R
 import com.ho2ri2s.selfmanagement.model.Income
 import com.ho2ri2s.selfmanagement.model.Outcome
+import com.ho2ri2s.selfmanagement.ui.theme.DarkBlue
 import kotlinx.coroutines.launch
 
 @Composable
@@ -54,8 +61,14 @@ fun ExpenseScreen(
     viewModel: ExpenseViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.expenseUiState.collectAsStateWithLifecycle()
+    val needReload by viewModel.needReloadStateFlow.collectAsStateWithLifecycle()
     LaunchedEffect(Unit) {
         viewModel.onShowScreen()
+    }
+    LaunchedEffect(needReload) {
+        if (needReload) {
+            viewModel.onReload()
+        }
     }
     ExpenseScreen(uiState)
 }
@@ -66,17 +79,27 @@ fun ExpenseScreen(
     uiState: ExpenseScreenUiState,
 ) {
     val sheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
+    var isIncomeInputMode by remember { mutableStateOf(true) }
+    val coroutineScope = rememberCoroutineScope()
 
+    val onClickSave: () -> Unit = {
+        coroutineScope.launch {
+            sheetState.hide()
+        }
+    }
     ModalBottomSheetLayout(
         sheetContent = {
-            InputIncomeBottomSheet()
-//            InputOutcomeBottomSheet()
+            if (isIncomeInputMode) {
+                InputIncomeBottomSheet(onClickSave = onClickSave)
+            } else {
+                InputOutcomeBottomSheet(onClickSave = onClickSave)
+            }
         },
         sheetState = sheetState,
         sheetShape = RoundedCornerShape(16.dp),
     ) {
         Scaffold(
-            topBar = { ExpenseAppBar(onClickCreateButton = { sheetState.show() }) },
+            topBar = { ExpenseAppBar() },
             backgroundColor = MaterialTheme.colors.background,
         ) { innerPadding ->
             Column(
@@ -87,9 +110,25 @@ fun ExpenseScreen(
             ) {
                 ExpensePieChart()
                 Spacer(modifier = Modifier.height(16.dp))
-                IncomeComponent(uiState.expense?.income)
+                IncomeComponent(
+                    income = uiState.expense?.income,
+                    onCreateIncomeClicked = {
+                        isIncomeInputMode = true
+                        coroutineScope.launch {
+                            sheetState.show()
+                        }
+                    },
+                )
                 Spacer(modifier = Modifier.height(16.dp))
-                OutcomeList(uiState.expense?.outcomes ?: ImmutableList.of())
+                OutcomeList(
+                    outcomes = uiState.expense?.outcomes ?: ImmutableList.of(),
+                    onCreateOutcomeClicked = {
+                        isIncomeInputMode = false
+                        coroutineScope.launch {
+                            sheetState.show()
+                        }
+                    },
+                )
             }
         }
     }
@@ -97,7 +136,6 @@ fun ExpenseScreen(
 
 @Composable
 private fun ExpenseAppBar(
-    onClickCreateButton: suspend () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val scope = rememberCoroutineScope()
@@ -109,17 +147,6 @@ private fun ExpenseAppBar(
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,
             )
-        },
-        actions = {
-            Box(
-                modifier =
-                Modifier
-                    .size(60.dp)
-                    .clickable { scope.launch { onClickCreateButton() } },
-                contentAlignment = Alignment.Center,
-            ) {
-                Icon(Icons.Filled.Add, contentDescription = null)
-            }
         },
         modifier = modifier.height(60.dp),
         elevation = 2.dp,
@@ -169,22 +196,41 @@ private fun ExpensePieChart(modifier: Modifier = Modifier) {
 private fun IncomeComponent(
     income: Income?,
     modifier: Modifier = Modifier,
+    onCreateIncomeClicked: () -> Unit = {},
 ) {
     Surface(
         modifier = modifier.fillMaxWidth(),
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text(
-                text = stringResource(id = R.string.income),
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            Row(horizontalArrangement = Arrangement.SpaceBetween) {
-                Text(text = "2024年1月", fontSize = 16.sp)
-                Spacer(modifier = Modifier.weight(1f))
-                val amount = income?.separatedAmount() ?: "0"
-                Text(text = "¥$amount", fontSize = 16.sp)
+            Row(modifier = Modifier.height(48.dp)) {
+                Text(
+                    text = stringResource(id = R.string.income),
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.align(Alignment.CenterVertically),
+                )
+                if (income == null) {
+                    Spacer(modifier = Modifier.weight(1f))
+                    IconButton(
+                        onClick = { onCreateIncomeClicked() },
+                        modifier = Modifier.background(DarkBlue, RoundedCornerShape(4.dp)),
+                    ) {
+                        Icon(
+                            Icons.Filled.Add,
+                            contentDescription = stringResource(id = R.string.income_create),
+                            tint = Color.White,
+                        )
+                    }
+                }
+            }
+            if (income != null) {
+                Spacer(modifier = Modifier.height(16.dp))
+                Row(horizontalArrangement = Arrangement.SpaceBetween) {
+                    Text(text = "2024年1月", fontSize = 16.sp)
+                    Spacer(modifier = Modifier.weight(1f))
+                    val amount = income.separatedAmount()
+                    Text(text = "¥$amount", fontSize = 16.sp)
+                }
             }
         }
     }
@@ -194,18 +240,33 @@ private fun IncomeComponent(
 private fun OutcomeList(
     outcomes: ImmutableList<Outcome>,
     modifier: Modifier = Modifier,
+    onCreateOutcomeClicked: () -> Unit = {},
 ) {
     Surface(
         modifier = modifier.fillMaxWidth(),
     ) {
         LazyColumn(modifier = Modifier.padding(16.dp)) {
             item {
-                Text(
-                    text = stringResource(id = R.string.outcome),
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
+                Row(modifier = Modifier.height(48.dp)) {
+                    Text(
+                        text = stringResource(id = R.string.outcome),
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.align(Alignment.CenterVertically),
+                    )
+                    Spacer(modifier = Modifier.weight(1f))
+                    IconButton(
+                        onClick = { onCreateOutcomeClicked() },
+                        modifier = Modifier
+                            .background(DarkBlue, RoundedCornerShape(4.dp)),
+                    ) {
+                        Icon(
+                            Icons.Filled.Add,
+                            contentDescription = stringResource(id = R.string.outcome_create),
+                            tint = Color.White,
+                        )
+                    }
+                }
             }
             itemsIndexed(outcomes) { index, outcome ->
                 OutcomeItem(outcome)

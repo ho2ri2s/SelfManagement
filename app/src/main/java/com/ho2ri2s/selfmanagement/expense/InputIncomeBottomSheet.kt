@@ -26,12 +26,18 @@ import com.ho2ri2s.selfmanagement.R
 import com.ho2ri2s.selfmanagement.ui.theme.MediumEmphasis
 
 @Composable
-fun InputIncomeBottomSheet(viewModel: InputIncomeViewModel = hiltViewModel()) {
+fun InputIncomeBottomSheet(
+    viewModel: InputIncomeViewModel = hiltViewModel(),
+    onClickSave: () -> Unit = {},
+) {
     val uiState by viewModel.amountUiState.collectAsStateWithLifecycle()
     InputIncomeBottomSheet(
         uiState = uiState,
         onChangeIncomeAmount = viewModel::onChangeIncomeAmount,
-        onClickSave = viewModel::onClickSave,
+        onClickSave = {
+            onClickSave()
+            viewModel.onClickSave()
+        },
     )
 }
 
