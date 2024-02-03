@@ -11,7 +11,7 @@ import com.ho2ri2s.selfmanagement.signup.SignupScreen
 @Composable
 fun MainScreen() {
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = "expense") {
+    NavHost(navController = navController, startDestination = "signup") {
         composable("expense") {
             ExpenseScreen(
                 viewModel = hiltViewModel(),

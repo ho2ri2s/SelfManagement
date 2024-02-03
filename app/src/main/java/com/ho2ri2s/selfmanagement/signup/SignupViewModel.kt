@@ -14,86 +14,84 @@ import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
-class SignupViewModel
-    @Inject
-    constructor(
-        private val authRepository: AuthRepository,
-    ) : ViewModel() {
-        private val mutableEmailStateFlow: MutableStateFlow<EmailState> =
-            MutableStateFlow(EmailState.Initial)
-        private val mutablePasswordStateFlow: MutableStateFlow<PasswordState> =
-            MutableStateFlow(PasswordState.Initial)
+class SignupViewModel @Inject constructor(
+    private val authRepository: AuthRepository,
+) : ViewModel() {
+    private val mutableEmailStateFlow: MutableStateFlow<EmailState> =
+        MutableStateFlow(EmailState.Initial)
+    private val mutablePasswordStateFlow: MutableStateFlow<PasswordState> =
+        MutableStateFlow(PasswordState.Initial)
 
-        private val mutableSnackBarState: MutableStateFlow<SignupSnackBarType?> = MutableStateFlow(null)
-        val snackBarState: StateFlow<SignupSnackBarType?> = mutableSnackBarState.asStateFlow()
+    private val mutableSnackBarState: MutableStateFlow<SignupSnackBarType?> = MutableStateFlow(null)
+    val snackBarState: StateFlow<SignupSnackBarType?> = mutableSnackBarState.asStateFlow()
 
-        // TODO: navigationを良い感じにまとめる
-        private val mutableNavigateState: MutableStateFlow<Boolean> = MutableStateFlow(false)
-        val navigateState: StateFlow<Boolean> = mutableNavigateState.asStateFlow()
+    // TODO: navigationを良い感じにまとめる
+    private val mutableNavigateState: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val navigateState: StateFlow<Boolean> = mutableNavigateState.asStateFlow()
 
-        val uiState =
-            buildUiState(
-                mutableEmailStateFlow,
-                mutablePasswordStateFlow,
-            ) { email, password ->
-                val isEnabled = email.type.isValid && password.type.isValid
-                SignupScreenUiState(
-                    emailState = email,
-                    passwordState = password,
-                    isEnabledSignup = isEnabled,
+    val uiState =
+        buildUiState(
+            mutableEmailStateFlow,
+            mutablePasswordStateFlow,
+        ) { email, password ->
+            val isEnabled = email.type.isValid && password.type.isValid
+            SignupScreenUiState(
+                emailState = email,
+                passwordState = password,
+                isEnabledSignup = isEnabled,
+            )
+        }
+
+    fun onChangeEmail(value: String) {
+        mutableEmailStateFlow.update { it.onChangedValue(value) }
+    }
+
+    fun onChangePassword(value: String) {
+        mutablePasswordStateFlow.update { it.onChangedValue(value) }
+    }
+
+    fun onClickSignup() {
+        if (!uiState.value.emailState.type.isValid) return
+        if (!uiState.value.passwordState.type.isValid) return
+        viewModelScope.launch {
+            runCatching {
+                authRepository.signupWithEmailPassword(
+                    uiState.value.emailState.value,
+                    uiState.value.passwordState.value,
                 )
             }
-
-        fun onChangeEmail(value: String) {
-            mutableEmailStateFlow.update { it.onChangedValue(value) }
-        }
-
-        fun onChangePassword(value: String) {
-            mutablePasswordStateFlow.update { it.onChangedValue(value) }
-        }
-
-        fun onClickSignup() {
-            if (!uiState.value.emailState.type.isValid) return
-            if (!uiState.value.passwordState.type.isValid) return
-            viewModelScope.launch {
-                runCatching {
-                    authRepository.signupWithEmailPassword(
-                        uiState.value.emailState.value,
-                        uiState.value.passwordState.value,
-                    )
-                }
-                    .onSuccess {
-                        registerUser()
-                    }
-                    .onFailure {
-                        Timber.e(it, it.message)
-                        mutableSnackBarState.value = SignupSnackBarType.FailedAuth
-                    }
-            }
-        }
-
-        fun onShownSnackBar() {
-            mutableSnackBarState.value = null
-        }
-
-        private suspend fun registerUser() {
-            runCatching {
-                authRepository.register(uiState.value.emailState.value, "testhoris")
-            }
                 .onSuccess {
-                    mutableSnackBarState.value = SignupSnackBarType.SuccessAuth
-                    mutableNavigateState.value = true
+                    registerUser()
                 }
                 .onFailure {
                     Timber.e(it, it.message)
                     mutableSnackBarState.value = SignupSnackBarType.FailedAuth
                 }
         }
-
-        fun onNavigated() {
-            mutableNavigateState.value = false
-        }
     }
+
+    fun onShownSnackBar() {
+        mutableSnackBarState.value = null
+    }
+
+    private suspend fun registerUser() {
+        runCatching {
+            authRepository.register(uiState.value.emailState.value, "testhoris")
+        }
+            .onSuccess {
+                mutableSnackBarState.value = SignupSnackBarType.SuccessAuth
+                mutableNavigateState.value = true
+            }
+            .onFailure {
+                Timber.e(it, it.message)
+                mutableSnackBarState.value = SignupSnackBarType.FailedAuth
+            }
+    }
+
+    fun onNavigated() {
+        mutableNavigateState.value = false
+    }
+}
 
 enum class SignupSnackBarType {
     FailedAuth,

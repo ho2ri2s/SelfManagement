@@ -98,7 +98,10 @@ fun ExpenseScreen(
     ModalBottomSheetLayout(
         sheetContent = {
             if (isIncomeInputMode) {
-                InputIncomeBottomSheet(onClickSave = onClickSave)
+                InputIncomeBottomSheet(
+                    currentDate = uiState.currentDate,
+                    onClickSave = onClickSave
+                )
             } else {
                 InputOutcomeBottomSheet(
                     currentDate = uiState.currentDate,

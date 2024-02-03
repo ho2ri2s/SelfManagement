@@ -11,6 +11,7 @@ import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -24,12 +25,17 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ho2ri2s.selfmanagement.R
 import com.ho2ri2s.selfmanagement.ui.theme.MediumEmphasis
+import java.time.LocalDateTime
 
 @Composable
 fun InputIncomeBottomSheet(
+    currentDate: LocalDateTime,
     viewModel: InputIncomeViewModel = hiltViewModel(),
     onClickSave: () -> Unit = {},
 ) {
+    LaunchedEffect(key1 = currentDate, block = {
+        viewModel.setup(currentDate)
+    })
     val uiState by viewModel.amountUiState.collectAsStateWithLifecycle()
     InputIncomeBottomSheet(
         uiState = uiState,
