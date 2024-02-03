@@ -27,6 +27,8 @@ import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -70,13 +72,19 @@ fun ExpenseScreen(
             viewModel.onReload()
         }
     }
-    ExpenseScreen(uiState)
+    ExpenseScreen(
+        uiState = uiState,
+        onClickCalendarLeft = viewModel::onClickCalendarLeft,
+        onClickCalendarRight = viewModel::onClickCalendarRight,
+    )
 }
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ExpenseScreen(
     uiState: ExpenseScreenUiState,
+    onClickCalendarLeft: () -> Unit = {},
+    onClickCalendarRight: () -> Unit = {},
 ) {
     val sheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
     var isIncomeInputMode by remember { mutableStateOf(true) }
@@ -99,7 +107,13 @@ fun ExpenseScreen(
         sheetShape = RoundedCornerShape(16.dp),
     ) {
         Scaffold(
-            topBar = { ExpenseAppBar() },
+            topBar = {
+                ExpenseAppBar(
+                    yearMonth = uiState.getYearMonth(),
+                    onClickCalendarLeft = onClickCalendarLeft,
+                    onClickCalendarRight = onClickCalendarRight,
+                )
+            },
             backgroundColor = MaterialTheme.colors.background,
         ) { innerPadding ->
             Column(
@@ -136,17 +150,31 @@ fun ExpenseScreen(
 
 @Composable
 private fun ExpenseAppBar(
+    yearMonth: String,
     modifier: Modifier = Modifier,
+    onClickCalendarLeft: () -> Unit = {},
+    onClickCalendarRight: () -> Unit = {},
 ) {
-    val scope = rememberCoroutineScope()
     TopAppBar(
         title = {
-            Text(
-                text = "2024年1月",
-                fontSize = 20.sp,
-                modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center,
-            )
+            Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    IconButton(onClick = onClickCalendarLeft) {
+                        Icon(Icons.Filled.KeyboardArrowLeft, contentDescription = null)
+                    }
+                    Text(
+                        text = yearMonth,
+                        fontSize = 20.sp,
+                        textAlign = TextAlign.Center,
+                    )
+                    IconButton(onClick = onClickCalendarRight) {
+                        Icon(Icons.Filled.KeyboardArrowRight, contentDescription = null)
+                    }
+                }
+            }
         },
         modifier = modifier.height(60.dp),
         elevation = 2.dp,
