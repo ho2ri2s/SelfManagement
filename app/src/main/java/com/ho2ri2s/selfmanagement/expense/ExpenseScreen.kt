@@ -100,11 +100,19 @@ fun ExpenseScreen(
             if (isIncomeInputMode) {
                 InputIncomeBottomSheet(onClickSave = onClickSave)
             } else {
-                InputOutcomeBottomSheet(onClickSave = onClickSave)
+                InputOutcomeBottomSheet(
+                    currentDate = uiState.currentDate,
+                    onClickSave = onClickSave,
+                )
             }
         },
         sheetState = sheetState,
-        sheetShape = RoundedCornerShape(16.dp),
+        sheetShape = RoundedCornerShape(
+            topStart = 16.dp,
+            topEnd = 16.dp,
+            bottomEnd = 0.dp,
+            bottomStart = 0.dp
+        ),
     ) {
         Scaffold(
             topBar = {
