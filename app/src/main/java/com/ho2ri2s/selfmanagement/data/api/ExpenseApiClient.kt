@@ -81,6 +81,7 @@ class ExpenseApiClient @Inject constructor(
         year: Int,
         month: Int,
     ): Expense {
+        // TODO: expenseが存在しない月に400が返ってくる修正をする
         val response = service.getExpense(year, month)
         return response.toModel()
     }

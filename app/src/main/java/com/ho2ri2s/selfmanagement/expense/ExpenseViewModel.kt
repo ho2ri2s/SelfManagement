@@ -2,19 +2,16 @@ package com.ho2ri2s.selfmanagement.expense
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.common.collect.ImmutableList
 import com.ho2ri2s.selfmanagement.data.repository.ExpenseRepository
 import com.ho2ri2s.selfmanagement.ext.buildUiState
 import com.ho2ri2s.selfmanagement.model.Expense
-import com.ho2ri2s.selfmanagement.model.Income
-import com.ho2ri2s.selfmanagement.model.IncomeId
-import com.ho2ri2s.selfmanagement.model.Outcome
-import com.ho2ri2s.selfmanagement.model.OutcomeId
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.time.LocalDateTime
 import javax.inject.Inject
 
 @HiltViewModel
@@ -23,14 +20,19 @@ class ExpenseViewModel @Inject constructor(
 ) : ViewModel() {
     private val mutableExpenseStateFlow: MutableStateFlow<Expense?> =
         MutableStateFlow(null)
-
+    private val mutableCurrentDateStateFlow: MutableStateFlow<LocalDateTime> =
+        MutableStateFlow(LocalDateTime.now())
 
     val needReloadStateFlow = expenseRepository.needReloadStateFlow
     val expenseUiState: StateFlow<ExpenseScreenUiState> =
         buildUiState(
             mutableExpenseStateFlow,
-        ) { expense ->
-            ExpenseScreenUiState(expense)
+            mutableCurrentDateStateFlow,
+        ) { expense, currentDate ->
+            ExpenseScreenUiState(
+                expense = expense,
+                currentDate = currentDate,
+            )
         }
 
     fun onShowScreen() {
@@ -40,10 +42,13 @@ class ExpenseViewModel @Inject constructor(
     private fun fetchExpense() {
         viewModelScope.launch {
             runCatching {
-                expenseRepository.getExpense(2024, 1)
+                val year = mutableCurrentDateStateFlow.value.year
+                val month = mutableCurrentDateStateFlow.value.monthValue
+                expenseRepository.getExpense(year, month)
             }.onSuccess {
                 mutableExpenseStateFlow.value = it
             }.onFailure {
+                Timber.e(it, "Failed to fetch expense")
                 // TODO: エラーハンドリング
             }
         }
@@ -52,5 +57,15 @@ class ExpenseViewModel @Inject constructor(
     fun onReload() {
         fetchExpense()
         expenseRepository.onReloaded()
+    }
+
+    fun onClickCalendarLeft() {
+        mutableCurrentDateStateFlow.update { it.minusMonths(1) }
+        fetchExpense()
+    }
+
+    fun onClickCalendarRight() {
+        mutableCurrentDateStateFlow.update { it.plusMonths(1) }
+        fetchExpense()
     }
 }

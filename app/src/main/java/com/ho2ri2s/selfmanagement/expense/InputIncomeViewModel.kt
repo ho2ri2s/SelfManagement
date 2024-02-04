@@ -9,15 +9,18 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.time.LocalDateTime
 import javax.inject.Inject
 
-// TODO: editは savedStateHandleで受け取る, Inputは月に一個
+// TODO: editは savedStateHandleで受け取る
 @HiltViewModel
 class InputIncomeViewModel @Inject constructor(
     private val expenseRepository: ExpenseRepository,
 ) : ViewModel() {
     private val mutableAmountStateFlow: MutableStateFlow<String> =
         MutableStateFlow("")
+    private val mutableCurrentDateStateFlow: MutableStateFlow<LocalDateTime> =
+        MutableStateFlow(LocalDateTime.now())
 
     val amountUiState: StateFlow<InputIncomeScreenUiState> =
         buildUiState(
@@ -26,6 +29,10 @@ class InputIncomeViewModel @Inject constructor(
             InputIncomeScreenUiState(amount)
         }
 
+    fun setup(currentDateTime: LocalDateTime) {
+        mutableCurrentDateStateFlow.value = currentDateTime
+    }
+
     fun onChangeIncomeAmount(value: String) {
         mutableAmountStateFlow.value = value
     }
@@ -33,9 +40,10 @@ class InputIncomeViewModel @Inject constructor(
     fun onClickSave() {
         viewModelScope.launch {
             runCatching {
+                val currentDate = mutableCurrentDateStateFlow.value
                 expenseRepository.createIncome(
-                    year = 2024,
-                    month = 1,
+                    year = currentDate.year,
+                    month = currentDate.monthValue,
                     amount = mutableAmountStateFlow.value.toIntOrNull() ?: 0,
                 )
             }.onFailure {
